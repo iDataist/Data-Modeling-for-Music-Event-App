@@ -1,5 +1,5 @@
 INSERT INTO artist(
-	id, name, city, state, address, phone, genre, facebook_link, image_link, website_link, looking_for_venues, seeking_description)
+	id, name, city, state, address, phone, genre, facebook_link, image_link, website, looking_for_venues, seeking_description)
 	VALUES 
         (1, 
 		'Guns N Petals',
@@ -42,7 +42,7 @@ INSERT INTO artist(
 		);
 
 INSERT INTO venue(
-	id, name, city, state, address, phone, genre, facebook_link, image_link, website_link, looking_for_talent, seeking_description)
+	id, name, city, state, address, phone, genre, facebook_link, image_link, website, seeking_talent, seeking_description)
 	VALUES 
 		(1, 
 		'The Musical Hop', 
