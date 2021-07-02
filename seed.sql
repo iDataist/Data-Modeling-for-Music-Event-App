@@ -1,5 +1,5 @@
 INSERT INTO artist(
-	id, name, city, state, address, phone, genres, facebook_link, image_link, website_link, looking_for_venues, seeking_description, past_shows_count, upcoming_shows_count)
+	id, name, city, state, address, phone, genre, facebook_link, image_link, website_link, looking_for_venues, seeking_description)
 	VALUES 
         (1, 
 		'Guns N Petals',
@@ -12,9 +12,7 @@ INSERT INTO artist(
 		'https://images.unsplash.com/photo-1549213783-8284d0336c4f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=300&q=80',
 		'https://www.gunsnpetalsband.com',
 		True,
-		'Looking for shows to perform at in the San Francisco Bay Area!',
-		0,
-		0
+		'Looking for shows to perform at in the San Francisco Bay Area!'
 		),
 		(2,
 		'Matt Quevedo',
@@ -27,9 +25,7 @@ INSERT INTO artist(
 		'https://images.unsplash.com/photo-1495223153807-b916f75de8c5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=334&q=80',
 		NULL,
 		False,
-		NULL,
-		0,
-		0
+		NULL
 		),
 		(3,
 		'The Wild Sax Band',
@@ -42,13 +38,11 @@ INSERT INTO artist(
 		'https://images.unsplash.com/photo-1558369981-f9ca78462e61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=794&q=80',
 		NULL,
 		False,
-		NULL,
-		0,
-		0
+		NULL
 		);
 
 INSERT INTO venue(
-	id, name, city, state, address, phone, genres, facebook_link, image_link, website_link, looking_for_talent, seeking_description, past_shows_count, upcoming_shows_count)
+	id, name, city, state, address, phone, genre, facebook_link, image_link, website_link, looking_for_talent, seeking_description)
 	VALUES 
 		(1, 
 		'The Musical Hop', 
@@ -61,9 +55,7 @@ INSERT INTO venue(
 		'https://images.unsplash.com/photo-1543900694-133f37abaaa5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60',
 		'https://www.themusicalhop.com',
 		True, 
-		'We are on the lookout for a local artist to play every two weeks. Please call us.',
-		0,
-		0
+		'We are on the lookout for a local artist to play every two weeks. Please call us.'
 		),
 		(2, 
 		'The Dueling Pianos Bar',
@@ -76,9 +68,7 @@ INSERT INTO venue(
 		'https://images.unsplash.com/photo-1497032205916-ac775f0649ae?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80',
 		'https://www.theduelingpianos.com',
 		False,
-		NULL,
-		0,
-		0
+		NULL
 		),
 		(3,
 		'Park Square Live Music & Coffee',
@@ -91,9 +81,7 @@ INSERT INTO venue(
 		'https://images.unsplash.com/photo-1485686531765-ba63b07845a7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=747&q=80',
 		'https://www.parksquarelivemusicandcoffee.com',
 		False,
-		NULL,
-		0,
-		0
+		NULL
 		);
 
 INSERT INTO show(
