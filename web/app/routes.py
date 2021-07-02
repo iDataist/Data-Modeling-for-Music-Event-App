@@ -54,7 +54,7 @@ def search_venues():
 
 @app.route('/venues/<int:venue_id>')
 def show_venue(venue_id):
-  app.logger.debug(venue_id)
+
   venue_subset = venue.loc[venue.id == venue_id]
   venue_show_df = pd.merge(venue_subset['id'], 
                            show[['venue_id','artist_id','start_time']], 
@@ -74,7 +74,7 @@ def show_venue(venue_id):
                     on='id', 
                     how='left')
   data = venues.to_dict(orient='records')
-  app.logger.debug(data)
+
   venue_show_subset_df = venue_show_df.loc[venue_show_df.id == venue_id]
   venue_show_artist_df = pd.merge(venue_show_subset_df, 
                                   artist[['id', 'image_link', 'name']], 
@@ -89,7 +89,7 @@ def show_venue(venue_id):
                .loc[venue_show_artist_df.is_past == 1][columns] \
                .to_dict(orient='records')
   return render_template('pages/show_venue.html', 
-                         venue=data, 
+                         venue=data[0], 
                          upcoming_shows=upcoming_shows,
                          past_shows=past_shows)
 
@@ -165,7 +165,7 @@ def show_artist(artist_id):
     "city": "San Francisco",
     "state": "CA",
     "phone": "326-123-5000",
-    "website": "https://www.gunsnpetalsband.com",
+    "website_link": "https://www.gunsnpetalsband.com",
     "facebook_link": "https://www.facebook.com/GunsNPetals",
     "seeking_venue": True,
     "seeking_description": "Looking for shows to perform at in the San Francisco Bay Area!",
@@ -244,7 +244,7 @@ def edit_artist(artist_id):
     "city": "San Francisco",
     "state": "CA",
     "phone": "326-123-5000",
-    "website": "https://www.gunsnpetalsband.com",
+    "website_link": "https://www.gunsnpetalsband.com",
     "facebook_link": "https://www.facebook.com/GunsNPetals",
     "seeking_venue": True,
     "seeking_description": "Looking for shows to perform at in the San Francisco Bay Area!",
@@ -271,7 +271,7 @@ def edit_venue(venue_id):
     "city": "San Francisco",
     "state": "CA",
     "phone": "123-123-1234",
-    "website": "https://www.themusicalhop.com",
+    "website_link": "https://www.themusicalhop.com",
     "facebook_link": "https://www.facebook.com/TheMusicalHop",
     "seeking_talent": True,
     "seeking_description": "We are on the lookout for a local artist to play every two weeks. Please call us.",
