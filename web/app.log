@@ -1,0 +1,15 @@
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 122-136-107
+DEBUG:app:1
+DEBUG:app:[{'id': 1, 'name': 'The Musical Hop', 'city': 'San Francisco', 'state': 'CA', 'address': '1015 Folsom Street', 'phone': '123-123-1234', 'genre': 'Jazz', 'facebook_link': 'https://www.facebook.com/TheMusicalHop', 'image_link': 'https://images.unsplash.com/photo-1543900694-133f37abaaa5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60', 'website_link': 'https://www.themusicalhop.com', 'looking_for_talent': True, 'seeking_description': 'We are on the lookout for a local artist to play every two weeks. Please call us.', 'upcoming_shows_count': 0, 'past_shows_count': 1}]
+INFO:werkzeug:127.0.0.1 - - [02/Jul/2021 16:08:30] "GET /venues/1 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [02/Jul/2021 16:08:30] "[36mGET /static/css/main.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [02/Jul/2021 16:08:30] "[36mGET /static/css/bootstrap.min.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [02/Jul/2021 16:08:30] "[36mGET /static/css/main.responsive.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [02/Jul/2021 16:08:30] "[36mGET /static/css/layout.main.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [02/Jul/2021 16:08:30] "[36mGET /static/css/main.quickfix.css HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [02/Jul/2021 16:08:30] "[36mGET /static/js/libs/modernizr-2.8.2.min.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [02/Jul/2021 16:08:30] "[36mGET /static/js/script.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [02/Jul/2021 16:08:30] "[36mGET /static/js/libs/moment.min.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [02/Jul/2021 16:08:30] "[36mGET /static/js/libs/bootstrap-3.1.1.min.js HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [02/Jul/2021 16:08:30] "[36mGET /static/js/plugins.js HTTP/1.1[0m" 304 -
