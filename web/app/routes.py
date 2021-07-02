@@ -2,11 +2,19 @@
 from flask import render_template, request, flash, redirect, url_for
 import dateutil.parser
 import babel
-import logging
 from logging import Formatter, FileHandler
 from app.forms import *
 from app import app, db
 from app.models import Venue, Artist, Show
+from sqlalchemy import create_engine
+import pandas as pd
+from datetime import datetime
+
+engine = create_engine('postgresql://postgres:postgres@localhost:5432/fyyur',
+                        echo=False)
+venue = pd.read_sql("SELECT * FROM venue", engine)
+artist = pd.read_sql("SELECT * FROM artist", engine)
+show = pd.read_sql("SELECT * FROM show", engine)
 
 def format_datetime(value, format='medium'):
   date = dateutil.parser.parse(value)
@@ -27,129 +35,63 @@ def index():
 
 @app.route('/venues')
 def venues():
-  # TODO: replace with real venues data.
-  #       num_shows should be aggregated based on number of upcoming shows per venue.
-  data=[{
-    "city": "San Francisco",
-    "state": "CA",
-    "venues": [{
-      "id": 1,
-      "name": "The Musical Hop",
-      "num_upcoming_shows": 0,
-    }, {
-      "id": 3,
-      "name": "Park Square Live Music & Coffee",
-      "num_upcoming_shows": 1,
-    }]
-  }, {
-    "city": "New York",
-    "state": "NY",
-    "venues": [{
-      "id": 2,
-      "name": "The Dueling Pianos Bar",
-      "num_upcoming_shows": 0,
-    }]
-  }]
+  venue_columns = ["city", "state", "id", "name"]
+  venues = venue[venue_columns]
+  data = venues.to_dict(orient='records')
   return render_template('pages/venues.html', areas=data);
 
 @app.route('/venues/search', methods=['POST'])
 def search_venues():
-  # TODO: implement search on artists with partial string search. Ensure it is case-insensitive.
-  # seach for Hop should return "The Musical Hop".
-  # search for "Music" should return "The Musical Hop" and "Park Square Live Music & Coffee"
-  response={
-    "count": 1,
-    "data": [{
-      "id": 2,
-      "name": "The Dueling Pianos Bar",
-      "num_upcoming_shows": 0,
-    }]
-  }
-  return render_template('pages/search_venues.html', results=response, search_term=request.form.get('search_term', ''))
+  search_term = request.form.get('search_term')
+  venues = venue[['id', 'name']]
+  data = venues.loc[venues['name'] \
+               .str.contains(search_term, case=False)] \
+               .to_dict(orient='records')
+  return render_template('pages/search_venues.html', 
+                          areas=data, 
+                          count=len(data), 
+                          search_term=search_term)
 
 @app.route('/venues/<int:venue_id>')
 def show_venue(venue_id):
-  # shows the venue page with the given venue_id
-  # TODO: replace with real venue data from the venues table, using venue_id
-  data1={
-    "id": 1,
-    "name": "The Musical Hop",
-    "genres": ["Jazz", "Reggae", "Swing", "Classical", "Folk"],
-    "address": "1015 Folsom Street",
-    "city": "San Francisco",
-    "state": "CA",
-    "phone": "123-123-1234",
-    "website": "https://www.themusicalhop.com",
-    "facebook_link": "https://www.facebook.com/TheMusicalHop",
-    "seeking_talent": True,
-    "seeking_description": "We are on the lookout for a local artist to play every two weeks. Please call us.",
-    "image_link": "https://images.unsplash.com/photo-1543900694-133f37abaaa5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60",
-    "past_shows": [{
-      "artist_id": 4,
-      "artist_name": "Guns N Petals",
-      "artist_image_link": "https://images.unsplash.com/photo-1549213783-8284d0336c4f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=300&q=80",
-      "start_time": "2019-05-21T21:30:00.000Z"
-    }],
-    "upcoming_shows": [],
-    "past_shows_count": 1,
-    "upcoming_shows_count": 0,
-  }
-  data2={
-    "id": 2,
-    "name": "The Dueling Pianos Bar",
-    "genres": ["Classical", "R&B", "Hip-Hop"],
-    "address": "335 Delancey Street",
-    "city": "New York",
-    "state": "NY",
-    "phone": "914-003-1132",
-    "website": "https://www.theduelingpianos.com",
-    "facebook_link": "https://www.facebook.com/theduelingpianos",
-    "seeking_talent": False,
-    "image_link": "https://images.unsplash.com/photo-1497032205916-ac775f0649ae?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80",
-    "past_shows": [],
-    "upcoming_shows": [],
-    "past_shows_count": 0,
-    "upcoming_shows_count": 0,
-  }
-  data3={
-    "id": 3,
-    "name": "Park Square Live Music & Coffee",
-    "genres": ["Rock n Roll", "Jazz", "Classical", "Folk"],
-    "address": "34 Whiskey Moore Ave",
-    "city": "San Francisco",
-    "state": "CA",
-    "phone": "415-000-1234",
-    "website": "https://www.parksquarelivemusicandcoffee.com",
-    "facebook_link": "https://www.facebook.com/ParkSquareLiveMusicAndCoffee",
-    "seeking_talent": False,
-    "image_link": "https://images.unsplash.com/photo-1485686531765-ba63b07845a7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=747&q=80",
-    "past_shows": [{
-      "artist_id": 5,
-      "artist_name": "Matt Quevedo",
-      "artist_image_link": "https://images.unsplash.com/photo-1495223153807-b916f75de8c5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=334&q=80",
-      "start_time": "2019-06-15T23:00:00.000Z"
-    }],
-    "upcoming_shows": [{
-      "artist_id": 6,
-      "artist_name": "The Wild Sax Band",
-      "artist_image_link": "https://images.unsplash.com/photo-1558369981-f9ca78462e61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=794&q=80",
-      "start_time": "2035-04-01T20:00:00.000Z"
-    }, {
-      "artist_id": 6,
-      "artist_name": "The Wild Sax Band",
-      "artist_image_link": "https://images.unsplash.com/photo-1558369981-f9ca78462e61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=794&q=80",
-      "start_time": "2035-04-08T20:00:00.000Z"
-    }, {
-      "artist_id": 6,
-      "artist_name": "The Wild Sax Band",
-      "artist_image_link": "https://images.unsplash.com/photo-1558369981-f9ca78462e61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=794&q=80",
-      "start_time": "2035-04-15T20:00:00.000Z"
-    }],
-    "past_shows_count": 1,
-    "upcoming_shows_count": 1,
-  }
-  data = list(filter(lambda d: d['id'] == venue_id, [data1, data2, data3]))[0]
-  return render_template('pages/show_venue.html', venue=data)
+  app.logger.debug(venue_id)
+  venue_subset = venue.loc[venue.id == venue_id]
+  venue_show_df = pd.merge(venue_subset['id'], 
+                           show[['venue_id','artist_id','start_time']], 
+                           left_on='id', 
+                           right_on='venue_id', 
+                           how='left')
+  venue_show_df['is_upcoming'] = venue_show_df['start_time'] \
+    .apply(lambda x: 1 if x > datetime.utcnow() else 0)
+  venue_show_df['is_past'] = venue_show_df['start_time'] \
+    .apply(lambda x: 1 if x < datetime.utcnow() else 0)
+  show_count_df = venue_show_df.groupby('id') \
+                               .agg({'is_upcoming': 'sum', 'is_past': 'sum'}) \
+                               .reset_index()
+  show_count_df.columns = ['id', 'upcoming_shows_count', 'past_shows_count']
+  venues = pd.merge(venue_subset, 
+                    show_count_df, 
+                    on='id', 
+                    how='left')
+  data = venues.to_dict(orient='records')
+  app.logger.debug(data)
+  venue_show_subset_df = venue_show_df.loc[venue_show_df.id == venue_id]
+  venue_show_artist_df = pd.merge(venue_show_subset_df, 
+                                  artist[['id', 'image_link', 'name']], 
+                                  left_on='artist_id', 
+                                  right_on='id', 
+                                  how='left').drop(columns=['venue_id', 'id_y'])
+  columns = ['artist_id', 'image_link', 'name', 'start_time']
+  upcoming_shows = venue_show_artist_df \
+                   .loc[venue_show_artist_df.is_upcoming == 1][columns] \
+                   .to_dict(orient='records')
+  past_shows = venue_show_artist_df \
+               .loc[venue_show_artist_df.is_past == 1][columns] \
+               .to_dict(orient='records')
+  return render_template('pages/show_venue.html', 
+                         venue=data, 
+                         upcoming_shows=upcoming_shows,
+                         past_shows=past_shows)
 
 #  Create Venue
 #  ----------------------------------------------------------------
