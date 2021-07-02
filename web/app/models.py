@@ -44,7 +44,6 @@ class Artist(db.Model):
     website_link = db.Column(db.String(120))
     looking_for_venues = db.Column(db.Boolean)
     seeking_description = db.Column(db.String(500))
-    venue = db.relationship('Venue', secondary='Show',
-        backref=db.backref('artist', lazy=True))
+
     def __repr__(self):
         return "Artist {} in {}".format(self.name, self.city)
