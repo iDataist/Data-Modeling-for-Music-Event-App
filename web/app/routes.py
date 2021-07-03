@@ -1,18 +1,27 @@
-
-from flask import render_template, request, flash, redirect, url_for, jsonify, abort
+#----------------------------------------------------------------------------#
+# Imports
+#----------------------------------------------------------------------------#
+from flask import render_template, request, flash, redirect, jsonify, abort
 import dateutil.parser
 import babel
-from logging import Formatter, FileHandler
-from app.forms import *
-from app import app, db
-from app.models import Venue, Artist, Show
 from sqlalchemy import create_engine
 import pandas as pd
 from datetime import datetime
+from app import app, db
 
-engine = create_engine('postgresql://postgres:postgres@localhost:5432/fyyur',
-                       echo=False)
+#----------------------------------------------------------------------------#
+# Models.
+#----------------------------------------------------------------------------#
+from app.models import *
 
+#----------------------------------------------------------------------------#
+# Forms.
+#----------------------------------------------------------------------------#
+from app.forms import *
+
+#----------------------------------------------------------------------------#
+# Filters.
+#----------------------------------------------------------------------------#
 def format_datetime(value, format='medium'):
     date = dateutil.parser.parse(value)
     if format == 'full':
@@ -22,6 +31,12 @@ def format_datetime(value, format='medium'):
     return babel.dates.format_datetime(date, format, locale='en')
 
 app.jinja_env.filters['datetime'] = format_datetime
+
+#----------------------------------------------------------------------------#
+# Controllers.
+#----------------------------------------------------------------------------#
+engine = create_engine('postgresql://postgres:postgres@localhost:5432/fyyur',
+                       echo=False)
 
 @app.route('/')
 def index():
@@ -110,37 +125,35 @@ def create_venue_submission():
     venue.facebook_link = request.form['facebook_link']
     venue.image_link = request.form['image_link']
     venue.website_link = request.form['website_link']
-    if request.form['seeking_talent'] == 'y':
-      venue.seeking_talent = True
-    else:
-      venue.seeking_talent = False
+    venue.seeking_talent = True if 'seeking_talent' in request.form else False
+    venue.seeking_description = request.form['seeking_description']
     try:
         db.session.add(venue)
         db.session.commit()
         flash('Venue ' + request.form['name'] + ' was successfully listed!')
-        return redirect('/forms/new_venue')
     except Exception as e:
         db.session.rollback()
+        app.logger.error(e)
         flash('An error occurred. Venue ' \
               + request.form['name'] \
               + ' could not be listed.')
-        app.logger.error(e)
+    finally:
+        db.session.close()
     return render_template('pages/home.html')
 
 @app.route('/venues/<int:venue_id>/edit', methods=['GET'])
 def edit_venue(venue_id):
-  form = VenueForm()
-  venue_subset = pd.read_sql("SELECT id, name FROM venue where id = {}" \
-                   .format(venue_id), engine) \
-                   .to_dict(orient='records')
-  return render_template('forms/edit_venue.html', 
-                         form=form, 
-                         venue=venue_subset)
+    venue = Venue.query.get(venue_id)
+    if not venue:
+      return render_template('pages/home.html')
+    form = VenueForm(obj=venue)
+    return render_template('forms/edit_venue.html', 
+                           form=form, 
+                           venue=venue)
 
 @app.route('/venues/<int:venue_id>/edit', methods=['POST'])
 def edit_venue_submission(venue_id):
     venue = Venue.query.get(venue_id)
-    app.logger.debug(venue)
     venue.name = request.form['name']
     venue.city = request.form['city']
     venue.state = request.form['state']
@@ -150,13 +163,9 @@ def edit_venue_submission(venue_id):
     venue.facebook_link = request.form['facebook_link']
     venue.image_link = request.form['image_link']
     venue.website_link = request.form['website_link']
-    if request.form['seeking_talent'] == 'y':
-      venue.seeking_talent = True
-    else:
-      venue.seeking_talent = False
-
+    venue.seeking_talent = True if 'seeking_talent' in request.form else False
+    venue.seeking_description = request.form['seeking_description']
     try:
-        db.session.update(venue)
         db.session.commit()
         flash('Venue ' + request.form['name'] + ' was successfully updated!')
         # return redirect('/venues/<int:venue_id>/edit')
@@ -166,44 +175,44 @@ def edit_venue_submission(venue_id):
               + request.form['name'] \
               + ' could not be updated.')
         app.logger.error(e)
+    finally:
+        db.session.close()
     return render_template('pages/home.html')
 
 @app.route('/venues/<venue_id>', methods=['DELETE'])
 def delete_venue(venue_id):
-    error = False
     try:
         venue = Venue.query.get(venue_id)
         db.session.delete(venue)
         db.session.commit()
-    except():
+        flash(f'Venue {venue_id} was successfully deleted!')
+    except Exception as e:
         db.session.rollback()
-        error = True
+        app.logger.error(e)
+        flash(f'An error occurred. Venue {venue_id} could not be deleted.')
     finally:
         db.session.close()
-    if error:
-        abort(500)
-    else:
-        return jsonify({'success': True})
+    return render_template('pages/home.html')
 
 #  Artists
 #  ----------------------------------------------------------------
 @app.route('/artists')
 def artists():
-  artists = pd.read_sql("SELECT id, name FROM artist", engine)
-  data = artists.to_dict(orient='records')
-  return render_template('pages/artists.html', artists=data)
+    artists = pd.read_sql("SELECT id, name FROM artist", engine)
+    data = artists.to_dict(orient='records')
+    return render_template('pages/artists.html', artists=data)
 
 @app.route('/artists/search', methods=['POST'])
 def search_artists():
-  artists = pd.read_sql("SELECT id, name FROM artist", engine)
-  search_term = request.form.get('search_term')
-  data = artists.loc[artists['name'] \
-                .str.contains(search_term, case=False)] \
-                .to_dict(orient='records')
-  return render_template('pages/search_artists.html', 
-                         areas=data,
-                         count=len(data),
-                         search_term=search_term)
+    artists = pd.read_sql("SELECT id, name FROM artist", engine)
+    search_term = request.form.get('search_term')
+    data = artists.loc[artists['name'] \
+                  .str.contains(search_term, case=False)] \
+                  .to_dict(orient='records')
+    return render_template('pages/search_artists.html', 
+                          areas=data,
+                          count=len(data),
+                          search_term=search_term)
 
 @app.route('/artists/<int:artist_id>')
 def show_artist(artist_id):
@@ -266,33 +275,31 @@ def create_artist_submission():
     artist.facebook_link = request.form['facebook_link']
     artist.image_link = request.form['image_link']
     artist.website_link = request.form['website_link']
-    if request.form['seeking_venue'] == 'y':
-      artist.seeking_venue = True
-    else:
-      artist.seeking_venue = False
+    artist.seeking_venue = True if 'seeking_venue' in request.form else False
+    artist.seeking_description = request.form['seeking_description']
     try:
         db.session.add(artist)
         db.session.commit()
         flash('Artist ' + request.form['name'] + ' was successfully updated!')
-        return redirect('/forms/new_artist')
     except Exception as e:
         db.session.rollback()
+        app.logger.error(e)
         flash('An error occurred. Artist ' \
               + request.form['name'] \
               + ' could not be updated.')
-        app.logger.error(e)
+    finally:
+        db.session.close()
     return render_template('pages/home.html')
 
 @app.route('/artists/<int:artist_id>/edit', methods=['GET'])
 def edit_artist(artist_id):
-  form = ArtistForm()
-  artist_subset = pd.read_sql("SELECT id, name FROM artist where id = {}" \
-                    .format(artist_id),engine) \
-                    .to_dict(orient='records')
-  return render_template('forms/edit_artist.html', 
-                         form=form, 
-                         artist=artist_subset)
-
+    artist = Artist.query.get(artist_id)
+    if not artist:
+      return render_template('pages/home.html')
+    form = ArtistForm(obj=artist)
+    return render_template('forms/edit_artist.html', 
+                           form=form, 
+                           artist=artist)
 @app.route('/artists/<int:artist_id>/edit', methods=['POST'])
 def edit_artist_submission(artist_id):
     artist = Artist.query.get(artist_id)
@@ -306,13 +313,9 @@ def edit_artist_submission(artist_id):
     artist.facebook_link = request.form['facebook_link']
     artist.image_link = request.form['image_link']
     artist.website_link = request.form['website_link']
-    if request.form['seeking_venue'] == 'y':
-      artist.seeking_venue = True
-    else:
-      artist.seeking_venue = False
-
+    artist.seeking_venue = True if 'seeking_venue' in request.form else False
+    artist.seeking_description = request.form['seeking_description']
     try:
-        db.session.update(artist)
         db.session.commit()
         flash('Artist ' + request.form['name'] + ' was successfully updated!')
         # return redirect('/artists/<int:artist_id>/edit')
@@ -369,8 +372,8 @@ def shows():
 
 @app.route('/shows/create')
 def create_shows():
-  form = ShowForm()
-  return render_template('forms/new_show.html', form=form)
+    form = ShowForm()
+    return render_template('forms/new_show.html', form=form)
 
 @app.route('/shows/create', methods=['POST'])
 def create_show_submission():
@@ -398,14 +401,3 @@ def not_found_error(error):
 @app.errorhandler(500)
 def server_error(error):
     return render_template('errors/500.html'), 500
-
-
-# if not app.debug:
-#     file_handler = FileHandler('error.log')
-#     file_handler.setFormatter(
-#         Formatter('%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]')
-#     )
-#     app.logger.setLevel(logging.INFO)
-#     file_handler.setLevel(logging.INFO)
-#     app.logger.addHandler(file_handler)
-#     app.logger.info('errors')
