@@ -3,7 +3,7 @@ DROP TABLE IF EXISTS venue CASCADE;
 DROP TABLE IF EXISTS artist CASCADE;
 
 CREATE TABLE show (
-    id int,
+    id serial,
     artist_id int,
     venue_id int,
     start_time timestamp,
@@ -13,7 +13,7 @@ CREATE TABLE show (
 );
 
 CREATE TABLE venue (
-    id int,
+    id serial,
     name varchar(120),
     city varchar(120),
     state varchar(120),
@@ -22,7 +22,7 @@ CREATE TABLE venue (
     genre varchar(120),
     facebook_link varchar(120),
     image_link varchar(200),
-    website varchar(120),
+    website_link varchar(120),
     seeking_talent bool,
     seeking_description varchar(500),
     CONSTRAINT pk_venue PRIMARY KEY (
@@ -31,7 +31,7 @@ CREATE TABLE venue (
 );
 
 CREATE TABLE artist (
-    id int,
+    id serial,
     name varchar(120),
     city varchar(120),
     state varchar(120),
@@ -40,8 +40,8 @@ CREATE TABLE artist (
     genre varchar(120),
     facebook_link varchar(120),
     image_link varchar(200),
-    website varchar(120),
-    looking_for_venues bool,
+    website_link varchar(120),
+    seeking_venue bool,
     seeking_description varchar(500),
     CONSTRAINT pk_artist PRIMARY KEY (
         id

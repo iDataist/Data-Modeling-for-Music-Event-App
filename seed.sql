@@ -1,7 +1,7 @@
 INSERT INTO artist(
-	id, name, city, state, address, phone, genre, facebook_link, image_link, website, looking_for_venues, seeking_description)
+	name, city, state, address, phone, genre, facebook_link, image_link, website_link, seeking_venue, seeking_description)
 	VALUES 
-        (1, 
+        (
 		'Guns N Petals',
 		'San Francisco',
 		'CA',
@@ -14,7 +14,7 @@ INSERT INTO artist(
 		True,
 		'Looking for shows to perform at in the San Francisco Bay Area!'
 		),
-		(2,
+		(
 		'Matt Quevedo',
 		'New York',
 		'NY',
@@ -27,7 +27,7 @@ INSERT INTO artist(
 		False,
 		NULL
 		),
-		(3,
+		(
 		'The Wild Sax Band',
 		'San Francisco',
 		'CA',
@@ -42,9 +42,9 @@ INSERT INTO artist(
 		);
 
 INSERT INTO venue(
-	id, name, city, state, address, phone, genre, facebook_link, image_link, website, seeking_talent, seeking_description)
+	name, city, state, address, phone, genre, facebook_link, image_link, website_link, seeking_talent, seeking_description)
 	VALUES 
-		(1, 
+		(
 		'The Musical Hop', 
 		'San Francisco', 
 		'CA',
@@ -57,7 +57,7 @@ INSERT INTO venue(
 		True, 
 		'We are on the lookout for a local artist to play every two weeks. Please call us.'
 		),
-		(2, 
+		(
 		'The Dueling Pianos Bar',
 		'New York',
 		'NY',
@@ -70,7 +70,7 @@ INSERT INTO venue(
 		False,
 		NULL
 		),
-		(3,
+		(
 		'Park Square Live Music & Coffee',
 		'San Francisco',
 		'CA',
@@ -85,10 +85,10 @@ INSERT INTO venue(
 		);
 
 INSERT INTO show(
-	id, artist_id, venue_id, start_time)
+	artist_id, venue_id, start_time)
 	VALUES
-		(1, 1, 1, '2019-05-21T21:30:00.000Z'),
-		(2, 2, 3, '2019-06-15T23:00:00.000Z'),
-		(3, 3, 3, '2035-04-01T20:00:00.000Z'), 
-		(4, 3, 3, '2035-04-08T20:00:00.000Z'),
-		(5, 3, 3, '2035-04-15T20:00:00.000Z');
+		(1, 1, '2019-05-21T21:30:00.000Z'),
+		(2, 3, '2019-06-15T23:00:00.000Z'),
+		(3, 3, '2035-04-01T20:00:00.000Z'), 
+		(3, 3, '2035-04-08T20:00:00.000Z'),
+		(3, 3, '2035-04-15T20:00:00.000Z');
