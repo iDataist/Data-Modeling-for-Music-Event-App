@@ -37,6 +37,7 @@ class Artist(db.Model):
     name = db.Column(db.String(120))
     city = db.Column(db.String(120))
     state = db.Column(db.String(120))
+    address = db.Column(db.String(120))
     phone = db.Column(db.String(120))
     genre = db.Column(db.String(120))
     facebook_link = db.Column(db.String(120))
