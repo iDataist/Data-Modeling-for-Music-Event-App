@@ -1,6 +1,6 @@
 # Data Modeling for Music Event Site
 
-## Introduction
+## Overview
 Fyyur is a website that lists artists, venues, and shows and facilitates the discovery of live music events. I built the data models to power the API endpoints for the Fyyur site. I architected a PostgreSQL database to create, retrieve, update, and delete information about artists, venues and shows on Fyyur.
 
 ## Tech Stack (Dependencies)
