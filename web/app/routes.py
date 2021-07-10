@@ -300,6 +300,7 @@ def edit_artist(artist_id):
     return render_template('forms/edit_artist.html', 
                            form=form, 
                            artist=artist)
+
 @app.route('/artists/<int:artist_id>/edit', methods=['POST'])
 def edit_artist_submission(artist_id):
     artist = Artist.query.get(artist_id)
@@ -385,7 +386,6 @@ def create_show_submission():
         db.session.add(show)
         db.session.commit()
         flash('Show was successfully updated!')
-        return redirect('/forms/new_show')
     except Exception as e:
         db.session.rollback()
         flash('An error occurred. Artist ' \
