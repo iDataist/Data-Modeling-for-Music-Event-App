@@ -67,6 +67,7 @@ Navigate to project homepage [http://127.0.0.1:5000/](http://127.0.0.1:5000/) or
 
 5. **Migration**
     ```
+    cd web
     flask db init
     flask db stamp head
     flask db migrate
