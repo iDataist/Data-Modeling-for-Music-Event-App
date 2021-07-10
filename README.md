@@ -4,13 +4,13 @@
 Fyyur is a website that lists artists, venues, and shows and facilitates the discovery of live music events. I architected a PostgreSQL database to create, retrieve, update, and delete information about artists, venues and shows on Fyyur. I then built the data models to power the API endpoints for the Fyyur site.
 
 ## Tech Stack (Dependencies)
-### 1. Backend Dependencies
+### Backend
  * **virtualenv** as a tool to create isolated Python environments
  * **SQLAlchemy ORM** as the ORM library 
  * **PostgreSQL** as the database 
  * **Python3** and **Flask** as the server language and server framework
  * **Flask-Migrate** for creating and running schema migrations
-### 2. Frontend Dependencies
+### Frontend
 **HTML**, **CSS**, and **Javascript** with [Bootstrap 3](https://getbootstrap.com/docs/3.4/customize/) are used for the website's frontend. Bootstrap can only be installed by Node Package Manager (NPM). Therefore, if not already, download and install the [Node.js](https://nodejs.org/en/download/). Windows users must run the executable as an Administrator, and restart the computer after installation. After successfully installing the Node, verify the installation as shown below.
 
     ```
